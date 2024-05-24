@@ -136,7 +136,22 @@ fn unlock_fps(db_path: &str) -> Result<String> {
     game_quality_setting["KeyCustomFrameRate"] = json!(120);
     update_game_quality_setting(&conn, game_quality_setting)?;
 
-    Ok("FPS successfully unlocked!".into())
+    Ok("FPS successfully unlocked to 120!".into())
+}
+
+fn unlock_fps_165(db_path: &str) -> Result<String> {
+    file_exists(db_path)?;
+    let conn = Connection::open(db_path)?;
+    let mut game_quality_setting = read_game_quality_setting(&conn)?;
+
+    if game_quality_setting["KeyCustomFrameRate"] == json!(165) {
+        return Ok("FPS is already set to 165. No need to patch.".into());
+    }
+
+    game_quality_setting["KeyCustomFrameRate"] = json!(165);
+    update_game_quality_setting(&conn, game_quality_setting)?;
+
+    Ok("FPS successfully unlocked to 165!".into())
 }
 
 struct FPSUnlockerApp {
@@ -155,7 +170,7 @@ impl Default for FPSUnlockerApp {
     }
 }
 
-const APP_TITLE: &str = "WuWa Ploom 120 FPS Unlock";
+const APP_TITLE: &str = "WuWa Ploom 120 & 165 FPS Unlock";
 const INSTRUCTIONS: &str = "
 1) Check and set your FPS limit to 60, then close your game.
 2) Do not touch FPS or VSync options in-game.
@@ -221,6 +236,13 @@ impl App for FPSUnlockerApp {
                         Err(err) => self.status = format!("Error: {}", err),
                     }
                 }
+
+                if ui.button("Set FPS to 165").clicked() {
+                    match unlock_fps_165(&self.db_path) {
+                        Ok(message) => self.status = message,
+                        Err(err) => self.status = format!("Error: {}", err),
+                    }
+                }
             });
             ui.add_space(10.0);
             ui.label(&self.db_path);
@@ -231,6 +253,9 @@ impl App for FPSUnlockerApp {
                 ui.label(format!("KeyCustomFrameRate: {}", fps));
                 if fps == 120 {
                     ui.label("FPS is already set to 120. No need to patch.");
+                }
+                if fps == 165 {
+                    ui.label("FPS is already set to 165. No need to patch.");
                 }
             }
             ui.add_space(10.0);
