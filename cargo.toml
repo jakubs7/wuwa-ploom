@@ -1,0 +1,21 @@
+[package]
+name = "wuwa-ploom"
+version = "1.0.0"
+edition = "2021"
+authors = [" Abellio https://github.com/jakubs7"]
+description = "Set of tools for Wuthering Waves"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+rusqlite = { version = "0.26.3", features = ["bundled"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+winapi = { version = "0.3.9", features = ["consoleapi", "wincon", "winreg", "winuser"] }
+egui = "0.19"
+eframe = "0.19"
+rfd = "0.8"  # For file dialog
+winreg = "0.10"
+
+[build-dependencies]
+embed-resource = "2.0"
